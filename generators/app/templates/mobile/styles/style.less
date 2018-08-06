@@ -1,0 +1,30 @@
+// <%= imgPath %>
+
+@activityName: '<%= projectName %>';
+@baseSize: 108rem; // 1080px -> fontSize -> 108px
+@baseImgPath: '<%= imgPath %>';
+
+//滚动更流畅
+body {
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    /*ios*/
+}
+
+#app button {
+    outline: none;
+    border: none;
+    -webkit-tap-highlight-color:rgba(0,0,0,0);
+}
+
+#app .button {
+    outline: none;
+    border: none;
+    text-align: center;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color:rgba(0,0,0,0);
+}
+
+/* PC Mobile 公共样式部分 */
+
+/* Mobile 单独样式部分 */
