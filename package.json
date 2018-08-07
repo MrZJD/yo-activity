@@ -10,7 +10,7 @@
   ],
   "main": "generators/app/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "new": "node node_modules/yo/lib/cli.js ."
   },
   "author": "",
   "license": "ISC",
@@ -20,5 +20,8 @@
     "glob": "^7.1.2",
     "lodash": "^4.17.10",
     "yeoman-generator": "^3.0.0"
+  },
+  "devDependencies": {
+    "yo": "^2.0.5"
   }
 }

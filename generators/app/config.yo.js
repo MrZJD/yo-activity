@@ -1,7 +1,9 @@
 module.exports = {
     /* Base Path */
-    outputHtmlDir: 'C:/Users/Administrator/Desktop/work/pro/xingguang/xingguang/html', // ejs 相关输出路径
-    outputStaticDir: 'C:/Users/Administrator/Desktop/work/pro/xingguang/xingguang/static_guojiang_tv', // 静态文件 相关输出路径(js/less/imgs)
+    // outputHtmlDir: 'C:/Users/Administrator/Desktop/work/pro/xingguang/xingguang/html', // ejs 相关输出路径
+    // outputStaticDir: 'C:/Users/Administrator/Desktop/work/pro/xingang/xingguang/static_guojiang_tv', // ejs 相关输出路径
+    outputHtmlDir: 'C:/Users/Administrator/Desktop/yot/html', // ejs 相关输出路径
+    outputStaticDir: 'C:/Users/Administrator/Desktop/yot/static_guojiang_tv', // 静态文件 相关输出路径(js/less/imgs)
 
     /* Templates Relative Path */
     outputHtmlPCDir: 'pc/src/activity',

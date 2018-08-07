@@ -1,8 +1,8 @@
-#### 星光直播前后端分离 - 活动脚手架
+## 星光直播前后端分离 - 活动脚手架
 
 ---
 
-##### Prepare
+#### Prepare
 
 1. 全局安装yeoman
 
@@ -40,22 +40,41 @@
    npm link
    ```
 
-   
+#### 如果你希望在项目中本地化安装使用
 
-##### Usage
+```js
+npm install -D yo
+
+// package.json 中添加
+// . 表示genarator项目目录
+"scripts": {
+    "new": "node node_modules/yo/lib/cli.js ."
+}
+```
+
+#### Usage
+
+global
 
 ```bash
 yo activity
 
-// 项目名称 - forTest(对应的所有文件名均为forTest)
-// 项目名称 - queen/forTest(二级目录项目)
+# ? 请输入项目名称  - forTest(对应的所有文件名均为forTest)
+# ? 请输入项目名称  - queen/forTest(二级目录项目) (支持多级目录)
 
-// 是否需要新建活动目录 - 将在目录中为该活动新建目录
+# ? 请选择模板 (PC Mobile PC&Mobile)
 ```
 
+devDep
 
+```bash
+npm run new
 
-##### Q&A
+# ? 请输入项目名称 (支持多级目录)
+# ? 请选择模板 (PC Mobile PC&Mobile)
+```
+
+#### Q&A
 
 **当生成列表报告文件已存在时?**
 
@@ -75,7 +94,7 @@ yo activity
 
 
 
-##### Extendsion 扩展
+#### Extendsion 扩展
 
 **index.js - 脚手架入口文件**
 

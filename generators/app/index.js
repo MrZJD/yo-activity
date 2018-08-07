@@ -21,6 +21,11 @@ module.exports = class extends Generators {
      * @desc 询问用户
      */
     prompting () {
+        this.log(chalk.green('Check Your Configuration Path Avaiable. Please Wait...'));
+        if (!this._prepare()) {
+            process.exit(1);
+        }
+
         return this.prompt([{
             name: 'pName',
             type: 'input',
@@ -41,18 +46,6 @@ module.exports = class extends Generators {
                 name: 'Mobile',
                 value: ['Mobile']
             }]
-        }, {
-            name: 'pIsBasedOnDir',
-            type: 'list',
-            message: '是否需要新建活动目录',
-            choices: [{
-                name: '需要',
-                value: true,
-                checked: true
-            }, {
-                name: '不需要',
-                value: false
-            }]
         }]).then((answers) => {
             this.log('Your Project Name (Dir & File name): ', answers.pName);
             this.log('Your Project Template Type: ', answers.pAssets);
@@ -60,23 +53,14 @@ module.exports = class extends Generators {
             /* 打印输出目录 */
             this.log(chalk.green('Please Confirm Your Project Output Path: '));
 
-            /* 1. 确认是否是二级目录项目 */
-            let pathname, filename;
-            if (answers.pName.indexOf('/') > -1) {
-                let dir = answers.pName.split('/')[0];
-                filename = answers.pName.split('/')[1];
-                pathname = dir + '/';
-                pathname += answers.pIsBasedOnDir ? (filename + '/' + filename) : filename;
-            } else {
-                filename = answers.pName;
-                pathname = answers.pIsBasedOnDir ? (answers.pName + '/' + answers.pName) : answers.pName;
-            }
+            // let pathname = path.dirname(answers.pName);
+            let filename = path.basename(answers.pName);
 
             let files = {
-                'ejs': pathname + '.ejs',
-                'ejs_js': pathname + '.js',
-                'less': pathname + '.less',
-                'js': pathname + '.js',
+                'ejs': answers.pName + '.ejs',
+                'ejs_js': answers.pName + '.js',
+                'less': answers.pName + '.less',
+                'js': answers.pName + '.js',
             };
 
             this.props = answers;
@@ -140,6 +124,38 @@ module.exports = class extends Generators {
     }
 
     /**
+     * 先行配置检查
+     */
+    _prepare () {
+        const paths = {
+            'HTML Base Path': path.resolve(config.outputHtmlDir),
+            'Static Resource Base Path': path.resolve(config.outputStaticDir),
+
+            'HTML Relative Path For PC': path.resolve(config.outputHtmlDir, config.outputHtmlPCDir),
+            'HTML Relative Path For Mobile': path.resolve(config.outputHtmlDir, config.outputHtmlMobileDir),
+
+            'Static Resource Relative Path For PC(JS)': path.resolve(config.outputStaticDir, config.outputStaticPCDirForJS),
+            'Static Resource Relative Path For PC(LESS)': path.resolve(config.outputStaticDir, config.outputStaticPCDirForStyles),
+            'Static Resource Relative Path For PC(IMG)': path.resolve(config.outputStaticDir, config.outputStaticPCDirForImgs),
+            
+            'Static Resource Relative Path For Mobile(JS)': path.resolve(config.outputStaticDir, config.outputStaticMobileDirForJS),
+            'Static Resource Relative Path For Mobile(LESS)': path.resolve(config.outputStaticDir, config.outputStaticMobileDirForStyles),
+            'Static Resource Relative Path For Mobile(IMG)': path.resolve(config.outputStaticDir, config.outputStaticMobileDirForImgs),
+        };
+
+        for (let p in paths) {
+            try {
+                fs.accessSync(paths[p]);
+            } catch (err) {
+                this.log(chalk.red('Error: ') + p + ': NOT EXIST! - ' + paths[p]);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * 获取文件路径表
      * @param {*} type // PC / Mobile
      * @param {*} files // 文件表
@@ -175,6 +191,8 @@ module.exports = class extends Generators {
      * @param {*} paths // 路径表
      */
     _writeByType (type, paths) {
+        this._ensurePathDir(paths);
+
         // 创建模板文件 ejs
         this.fs.copyTpl(
             this.templatePath(path.resolve(this.sourceRoot(), './' + type.toLowerCase() + '/index.ejs' )),
@@ -187,14 +205,14 @@ module.exports = class extends Generators {
         );
 
         // 创建模板引擎文件 ejs_js
-        let layoutPath;
-        if (this.props.pIsBasedOnDir && this.props.pName.indexOf('/') > -1) {
-            layoutPath = '../../../layouts/layout.js';
-        } else if (this.props.pIsBasedOnDir || this.props.pName.indexOf('/') > -1) {
-            layoutPath = '../../layouts/layout.js';
-        } else {
-            layoutPath = '../layouts/layout.js';
+        let layoutPath = '';
+        let candenes = this.props.pName.split(path.sep);
+        let ci = 0;
+        while (ci < candenes.length) {
+            layoutPath += '../';
+            ci++;
         }
+        layoutPath += 'layouts/layout.js';
 
         this.fs.copyTpl(
             this.templatePath(path.resolve(this.sourceRoot(), './' + type.toLowerCase() + '/index.js' )),
@@ -207,7 +225,7 @@ module.exports = class extends Generators {
         );
 
         // 创建活动存放图片的目录
-        fs.mkdirSync(paths['imgs']);
+        this._mkdirPSync(paths['imgs']);
         this.log(chalk.green('   create '), paths['imgs']);
 
         // 创建样式文件
@@ -228,5 +246,49 @@ module.exports = class extends Generators {
                 stylePath: path.relative(path.dirname(paths['js']), paths['less']).replace(/\\/g, "/")
             }
         );
+    }
+
+    /**
+     * 确定文件目录是否需要新建
+     * @param {{any}} paths 
+     */
+    _ensurePathDir (paths) {
+        // 确立ejs目录
+        try {
+            fs.accessSync(path.dirname(paths['ejs']));
+        } catch (err) {
+            this._mkdirPSync(path.dirname(paths['ejs']));
+        }
+
+        // ejs_js 与 js 同目录，无需重复确认
+
+        try {
+            fs.accessSync(path.dirname(paths['less']));
+        } catch (err) {
+            this._mkdirPSync(path.dirname(paths['less']));
+        }
+
+        try {
+            fs.accessSync(path.dirname(paths['js']));
+        } catch (err) {
+            this._mkdirPSync(path.dirname(paths['js']));
+        }
+    }
+
+    /**
+     * 支持嵌套创建目录
+     * @param {*} paths 
+     */
+    _mkdirPSync (dir) {
+        try {
+            fs.accessSync(dir); // 该目录已存在
+        } catch (err) {
+            try {
+                fs.accessSync(path.dirname(dir)); // 父级是否存在
+            } catch (err) {
+                this._mkdirPSync(path.dirname(dir));
+            }
+            fs.mkdirSync(dir);
+        }
     }
 };
