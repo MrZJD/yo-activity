@@ -1,13 +1,9 @@
 const Generators = require('yeoman-generator');
-const _ = require('lodash');
-const glob = require('glob');
 const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
-const del = require('del');
 
 const log = console.log;
-const generatorName = 'activity';
 const config = require('./config.yo');
 
 module.exports = class extends Generators {

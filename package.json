@@ -16,9 +16,6 @@
   "license": "ISC",
   "dependencies": {
     "chalk": "^2.4.1",
-    "del": "^3.0.0",
-    "glob": "^7.1.2",
-    "lodash": "^4.17.10",
     "yeoman-generator": "^3.0.0"
   },
   "devDependencies": {

@@ -1,7 +1,5 @@
 ## 星光直播前后端分离 - 活动脚手架
 
----
-
 #### Prepare
 
 1. 全局安装yeoman
@@ -107,7 +105,7 @@ module.exports = class extends Generators {
     }
     
     // 生命周期钩子函数
- 	/* 生命周期如下 */
+    /* 生命周期如下 */
     // 1. initializing
     // 2. prompting    // * 创建perl交互
     // 3. configuring
